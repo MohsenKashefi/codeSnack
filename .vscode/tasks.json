@@ -19,10 +19,28 @@
             "problemMatcher": []
         },
         {
-            "label": "gradle: Build and Install Debug",
+            "label": "gradle: Stop Daemons",
             "type": "shell",
             "command": "${workspaceFolder}/gradlew.bat",
             "args": [
+                "--stop"
+            ],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "gradle: Build and Install Debug",
+            "type": "shell",
+            "command": "powershell.exe",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/gradlew-safe.ps1",
                 "installDebug"
             ],
             "group": {
@@ -31,9 +49,20 @@
             },
             "presentation": {
                 "reveal": "always",
-                "panel": "shared"
+                "panel": "shared",
+                "focus": true
             },
-            "problemMatcher": []
+            "problemMatcher": {
+                "owner": "gradle",
+                "fileLocation": "absolute",
+                "pattern": {
+                    "regexp": "^(.+):([0-9]+): (warning|error): (.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            }
         },
         {
             "label": "gradle: Run App on Device",
@@ -53,11 +82,35 @@
         {
             "label": "gradle: Clean Build",
             "type": "shell",
-            "command": "${workspaceFolder}/gradlew.bat",
+            "command": "powershell.exe",
             "args": [
-                "clean"
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/gradlew-clean-safe.ps1"
             ],
             "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "adb: Check App Installed",
+            "type": "shell",
+            "command": "C:\\Users\\Mohsen\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe",
+            "args": [
+                "shell",
+                "pm",
+                "list",
+                "packages",
+                "|",
+                "grep",
+                "com.example.codesnack"
+            ],
+            "group": "none",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -73,7 +126,7 @@
                 "am",
                 "start",
                 "-n",
-                "com.example.codesnack/.MainActivity"
+                "com.example.codesnack/com.example.codesnack.MainActivity"
             ],
             "group": "none",
             "presentation": {
@@ -103,8 +156,143 @@
             "label": "Android: Build, Install & Run",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "gradle: Build and Install Debug",
+                "gradle: Build and Install Debug"
+            ],
+            "type": "shell",
+            "command": "C:\\Users\\Mohsen\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe",
+            "args": [
+                "shell",
+                "am",
+                "start",
+                "-n",
+                "com.example.codesnack/com.example.codesnack.MainActivity"
+            ],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🚀 HOT RELOAD: Quick Restart (Build + Install + Restart Activity)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "gradle: Fast Build and Install",
+                "adb: Restart Activity",
+                "adb: Start Activity Only"
+            ],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🔧 Fix Build: Clean + Stop Daemons + Build",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "gradle: Clean and Build Install",
                 "adb: Start Activity"
+            ],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "gradle: Fast Build and Install",
+            "type": "shell",
+            "command": "powershell.exe",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/gradlew-safe.ps1",
+                "--parallel",
+                "installDebug",
+                "-x",
+                "lint"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true
+            },
+            "problemMatcher": {
+                "owner": "gradle",
+                "fileLocation": "absolute",
+                "pattern": {
+                    "regexp": "^(.+):([0-9]+): (warning|error): (.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            }
+        },
+        {
+            "label": "gradle: Clean and Build Install",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "gradle: Stop Daemons",
+                "gradle: Clean Build",
+                "gradle: Build and Install Debug"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "adb: Restart Activity",
+            "type": "shell",
+            "command": "C:\\Users\\Mohsen\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe",
+            "args": [
+                "shell",
+                "am",
+                "force-stop",
+                "com.example.codesnack"
+            ],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "adb: Start Activity Only",
+            "type": "shell",
+            "command": "C:\\Users\\Mohsen\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe",
+            "args": [
+                "shell",
+                "am",
+                "start",
+                "-n",
+                "com.example.codesnack/com.example.codesnack.MainActivity"
+            ],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "⚡ QUICK: Just Restart Activity (No Build)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "adb: Restart Activity",
+                "adb: Start Activity Only"
             ],
             "group": "none",
             "presentation": {

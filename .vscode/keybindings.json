@@ -1,0 +1,14 @@
+[
+    {
+        "key": "ctrl+r",
+        "command": "workbench.action.tasks.runTask",
+        "args": "🚀 HOT RELOAD: Quick Restart (Build + Install + Restart Activity)"
+    },
+    {
+        "key": "ctrl+shift+r",
+        "command": "workbench.action.tasks.runTask",
+        "args": "⚡ QUICK: Just Restart Activity (No Build)"
+    }
+]
+
+

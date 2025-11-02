@@ -28,20 +28,21 @@ object WidgetWorkScheduler {
     }
 
     fun scheduleHourlyUpdate(context: Context) {
+        // Minimal constraints for more reliable updates
         val constraints = Constraints.Builder()
-            .setRequiresBatteryNotLow(true)
             .build()
 
         val hourlyWorkRequest = PeriodicWorkRequestBuilder<WidgetUpdateWorker>(
             1, TimeUnit.HOURS,
-            15, TimeUnit.MINUTES
+            15, TimeUnit.MINUTES // 15 minute flex window
         )
             .setConstraints(constraints)
+            .setInitialDelay(1, TimeUnit.HOURS) // First update after 1 hour
             .build()
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
             WIDGET_UPDATE_WORK_NAME,
-            ExistingPeriodicWorkPolicy.KEEP,
+            ExistingPeriodicWorkPolicy.REPLACE, // Replace existing to ensure fresh schedule
             hourlyWorkRequest
         )
     }

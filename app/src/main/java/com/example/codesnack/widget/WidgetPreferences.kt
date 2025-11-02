@@ -11,7 +11,7 @@ class WidgetPreferences(context: Context) {
     }
 
     fun setCurrentSnippetId(id: Int) {
-        prefs.edit().putInt(KEY_CURRENT_SNIPPET_ID, id).apply()
+        prefs.edit().putInt(KEY_CURRENT_SNIPPET_ID, id).commit()
     }
 
     fun getSelectedLanguage(): String? {

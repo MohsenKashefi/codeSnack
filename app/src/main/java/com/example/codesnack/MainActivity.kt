@@ -30,8 +30,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Schedule daily widget updates
-        WidgetWorkScheduler.scheduleDailyUpdate(this)
+        // Schedule hourly widget updates
+        WidgetWorkScheduler.scheduleHourlyUpdate(this)
 
         enableEdgeToEdge()
         setContent {
