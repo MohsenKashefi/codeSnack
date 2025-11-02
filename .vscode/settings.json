@@ -1,0 +1,21 @@
+{
+    // Android SDK configuration
+    "java.configuration.runtimes": [],
+    "java.home": "",
+    
+    // Kotlin settings
+    "kotlin.languageServer.enabled": true,
+    "kotlin.compiler.jvm.target": "11",
+    
+    // Task terminal settings
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    
+    // File associations
+    "files.associations": {
+        "*.kt": "kotlin"
+    },
+    
+    // Gradle settings
+    "gradle.nestedProjects": true,
+    "java.configuration.updateBuildConfiguration": "automatic"
+}

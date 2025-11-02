@@ -1,0 +1,43 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "kotlin",
+            "request": "launch",
+            "name": "Kotlin: Run Standalone File (with main function)",
+            "projectRoot": "${workspaceFolder}",
+            "mainClass": "${fileBasenameNoExtension}Kt",
+            // Note: This only works for standalone Kotlin files with a main() function.
+            // For Android Activities (like MainActivity), use Gradle tasks to build and install on device/emulator.
+            "args": []
+        },
+        {
+            "type": "kotlin",
+            "request": "launch",
+            "name": "Kotlin: Debug Standalone File",
+            "projectRoot": "${workspaceFolder}",
+            "mainClass": "${fileBasenameNoExtension}Kt",
+            // Note: This only works for standalone Kotlin files with a main() function.
+            // For Android Activities (like MainActivity), use Gradle tasks to build and install on device/emulator.
+            "stopOnEntry": false
+        }
+    ],
+    // Note: To run your Android Kotlin app from VS Code:
+    // Method 1 (Easiest): Press Ctrl+Shift+P -> "Tasks: Run Task" -> "Android: Build, Install & Run"
+    // Method 2: Press Ctrl+Shift+B (or F1 -> "Tasks: Run Build Task") to run default build task
+    // Method 3: Use individual tasks:
+    //    - "gradle: Build and Install Debug" - builds and installs on connected device/emulator
+    //    - "adb: Start Activity" - launches the app on device
+    //    
+    // Prerequisites:
+    // 1. Have an Android device/emulator connected
+    // 2. Check connection with: C:\Users\Mohsen\AppData\Local\Android\Sdk\platform-tools\adb.exe devices
+    // 3. Android Studio's SDK is already configured in local.properties
+    //
+    // For full Android debugging (breakpoints, etc.), use Android Studio.
+    // VS Code can build and run, but advanced debugging is best done in Android Studio.
+    "compounds": []
+}

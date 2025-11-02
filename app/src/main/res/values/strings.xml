@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CodeSnack</string>
+    <string name="widget_description">Daily programming tips, tricks, and best practices for multiple languages</string>
+</resources>
