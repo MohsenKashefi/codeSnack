@@ -29,6 +29,7 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.layout.wrapContentHeight
 import androidx.glance.layout.wrapContentSize
+import androidx.glance.text.FontFamily
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -63,9 +64,9 @@ class CodeSnackWidget : GlanceAppWidget() {
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(ColorProvider(Color(0xCC1A1A1A))) // Dark frosted glass
-                .cornerRadius(20.dp)
-                .padding(10.dp)
+                .background(ColorProvider(Color(0xF0F0F0F0))) // iOS light mode background
+                .cornerRadius(24.dp)
+                .padding(16.dp)
         ) {
             Column(
                 modifier = GlanceModifier
@@ -78,105 +79,111 @@ class CodeSnackWidget : GlanceAppWidget() {
                 Row(
                     modifier = GlanceModifier
                         .fillMaxWidth()
-                        .padding(bottom = 6.dp),
+                        .padding(bottom = 8.dp),
                     verticalAlignment = Alignment.Vertical.CenterVertically
                 ) {
-                    // Language badge
+                    // Language badge - iOS style
                     Box(
                         modifier = GlanceModifier
-                            .background(ColorProvider(getLanguageColorGlass(snippet)))
-                            .cornerRadius(12.dp)
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                            .background(ColorProvider(getLanguageColor(snippet)))
+                            .cornerRadius(8.dp)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = snippet.language.displayName,
                             style = TextStyle(
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = ColorProvider(Color.White)
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = ColorProvider(Color.White),
+                                fontFamily = FontFamily.SansSerif
                             )
                         )
                     }
 
                     Spacer(modifier = GlanceModifier.defaultWeight())
 
-                    // Category badge
+                    // Category badge - iOS subtle style
                     Box(
                         modifier = GlanceModifier
-                            .background(ColorProvider(Color(0x40FFFFFF))) // Frosted white overlay
-                            .cornerRadius(12.dp)
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                            .background(ColorProvider(Color(0x1A000000))) // iOS subtle overlay
+                            .cornerRadius(8.dp)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = snippet.category.displayName,
                             style = TextStyle(
-                                fontSize = 10.sp,
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = ColorProvider(Color(0xFFE0E0E0))
+                                color = ColorProvider(Color(0xFF666666)),
+                                fontFamily = FontFamily.SansSerif
                             )
                         )
                     }
                 }
 
-                // Title
+                // Title - iOS style
                 Text(
                     text = snippet.title,
                     style = TextStyle(
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = ColorProvider(Color(0xFFF5F5F5))
+                        color = ColorProvider(Color(0xFF000000)),
+                        fontFamily = FontFamily.SansSerif
                     ),
-                    modifier = GlanceModifier.padding(bottom = 6.dp),
+                    modifier = GlanceModifier.padding(bottom = 8.dp),
                     maxLines = 2
                 )
 
-                // Code block
+                // Code block - iOS monospace style
                 Box(
                     modifier = GlanceModifier
                         .fillMaxWidth()
-                        .background(ColorProvider(Color(0x33000000))) // Darker glass layer
-                        .cornerRadius(14.dp)
-                        .padding(10.dp)
+                        .background(ColorProvider(Color(0xFFF5F5F7))) // iOS light code background
+                        .cornerRadius(12.dp)
+                        .padding(12.dp)
                 ) {
                     Text(
                         text = snippet.code,
                         style = TextStyle(
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = ColorProvider(Color(0xFF64B5F6)) // Bright cyan-blue
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = ColorProvider(Color(0xFF007AFF)), // iOS blue
+                            fontFamily = FontFamily.Monospace
                         ),
                         maxLines = 5
                     )
                 }
 
-                Spacer(modifier = GlanceModifier.height(6.dp))
+                Spacer(modifier = GlanceModifier.height(8.dp))
 
-                // Explanation
+                // Explanation - iOS secondary text
                 Text(
                     text = snippet.explanation,
                     style = TextStyle(
-                        fontSize = 10.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
-                        color = ColorProvider(Color(0xFFBDBDBD))
+                        color = ColorProvider(Color(0xFF8E8E93)), // iOS secondary label
+                        fontFamily = FontFamily.SansSerif
                     ),
-                    modifier = GlanceModifier.padding(bottom = 2.dp),
+                    modifier = GlanceModifier.padding(bottom = 4.dp),
                     maxLines = 3
                 )
             
 
                 Spacer(modifier = GlanceModifier.defaultWeight())
 
-                // Footer - tap to refresh hint
+                // Footer - iOS style tap hint
                 Row(
                     modifier = GlanceModifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Horizontal.CenterHorizontally
                 ) {
                     Text(
-                        text = "✨ Tap to refresh",
+                        text = "Tap for next tip",
                         style = TextStyle(
-                            fontSize = 10.sp,
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = ColorProvider(Color(0x99FFFFFF))
+                            color = ColorProvider(Color(0xFFC7C7CC)), // iOS tertiary label
+                            fontFamily = FontFamily.SansSerif
                         )
                     )
                 }
