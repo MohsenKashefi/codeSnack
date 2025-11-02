@@ -52,7 +52,7 @@ class CodeSnackWidget : GlanceAppWidget() {
                 .fillMaxSize()
                 .background(ColorProvider(Color(0xFF1E1E1E)))
                 .cornerRadius(16.dp)
-                .padding(16.dp)
+                .padding(12.dp)
         ) {
             Column(
                 modifier = GlanceModifier
@@ -65,7 +65,7 @@ class CodeSnackWidget : GlanceAppWidget() {
                 Row(
                     modifier = GlanceModifier
                         .fillMaxWidth()
-                        .padding(bottom = 12.dp),
+                        .padding(bottom = 8.dp),
                     verticalAlignment = Alignment.Vertical.CenterVertically
                 ) {
                     // Language badge
@@ -73,7 +73,7 @@ class CodeSnackWidget : GlanceAppWidget() {
                         modifier = GlanceModifier
                             .background(ColorProvider(getLanguageColor(snippet)))
                             .cornerRadius(8.dp)
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = snippet.language.displayName,
@@ -92,7 +92,7 @@ class CodeSnackWidget : GlanceAppWidget() {
                         modifier = GlanceModifier
                             .background(ColorProvider(Color(0xFF37474F)))
                             .cornerRadius(8.dp)
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = snippet.category.displayName,
@@ -109,11 +109,11 @@ class CodeSnackWidget : GlanceAppWidget() {
                 Text(
                     text = snippet.title,
                     style = TextStyle(
-                        fontSize = 16.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = ColorProvider(Color(0xFFE0E0E0))
                     ),
-                    modifier = GlanceModifier.padding(bottom = 12.dp)
+                    modifier = GlanceModifier.padding(bottom = 8.dp)
                 )
 
                 // Code block
@@ -122,7 +122,7 @@ class CodeSnackWidget : GlanceAppWidget() {
                         .fillMaxWidth()
                         .background(ColorProvider(Color(0xFF2D2D2D)))
                         .cornerRadius(8.dp)
-                        .padding(12.dp)
+                        .padding(10.dp)
                 ) {
                     Text(
                         text = snippet.code,
@@ -134,17 +134,17 @@ class CodeSnackWidget : GlanceAppWidget() {
                     )
                 }
 
-                Spacer(modifier = GlanceModifier.height(12.dp))
+                Spacer(modifier = GlanceModifier.height(8.dp))
 
                 // Explanation
                 Text(
                     text = snippet.explanation,
                     style = TextStyle(
-                        fontSize = 13.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
                         color = ColorProvider(Color(0xFFB0BEC5))
                     ),
-                    modifier = GlanceModifier.padding(bottom = 8.dp)
+                    modifier = GlanceModifier.padding(bottom = 6.dp)
                 )
 
                 Spacer(modifier = GlanceModifier.defaultWeight())
