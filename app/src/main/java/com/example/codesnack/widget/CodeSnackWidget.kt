@@ -57,7 +57,12 @@ class CodeSnackWidget : GlanceAppWidget() {
         val prefs = currentState<androidx.datastore.preferences.core.Preferences>()
         val currentSnippetId = prefs[intPreferencesKey("current_snippet_id")] ?: 1
 
-        Log.d("CodeSnackWidget", "WidgetContent recomposing - Loading snippet with ID: $currentSnippetId")
+        // Get selected theme from preferences
+        val widgetPrefs = WidgetPreferences(context)
+        val selectedTheme = widgetPrefs.getWidgetTheme()
+        val themeColors = getThemeColors(selectedTheme)
+
+        Log.d("CodeSnackWidget", "WidgetContent recomposing - Loading snippet with ID: $currentSnippetId, Theme: ${selectedTheme.name}")
 
         // Get the snippet by ID, or fallback to snippet with ID 1 if not found
         val snippet = SnippetRepository.getSnippetById(currentSnippetId)
@@ -69,7 +74,7 @@ class CodeSnackWidget : GlanceAppWidget() {
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(ColorProvider(Color(0xF0F0F0F0))) // iOS light mode background
+                .background(ColorProvider(themeColors.background))
                 .cornerRadius(24.dp)
                 .padding(16.dp)
 
@@ -88,7 +93,7 @@ class CodeSnackWidget : GlanceAppWidget() {
                         .padding(bottom = 8.dp),
                     verticalAlignment = Alignment.Vertical.CenterVertically
                 ) {
-                    // Language badge - iOS style
+                    // Language badge
                     Box(
                         modifier = GlanceModifier
                             .background(ColorProvider(getLanguageColor(snippet)))
@@ -108,10 +113,10 @@ class CodeSnackWidget : GlanceAppWidget() {
 
                     Spacer(modifier = GlanceModifier.defaultWeight())
 
-                    // Category badge - iOS subtle style
+                    // Category badge
                     Box(
                         modifier = GlanceModifier
-                            .background(ColorProvider(Color(0x1A000000))) // iOS subtle overlay
+                            .background(ColorProvider(themeColors.categoryBadgeBackground))
                             .cornerRadius(8.dp)
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
@@ -120,31 +125,31 @@ class CodeSnackWidget : GlanceAppWidget() {
                             style = TextStyle(
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = ColorProvider(Color(0xFF666666)),
+                                color = ColorProvider(themeColors.categoryBadgeText),
                                 fontFamily = FontFamily.SansSerif
                             )
                         )
                     }
                 }
 
-                // Title - iOS style
+                // Title
                 Text(
                     text = snippet.title,
                     style = TextStyle(
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = ColorProvider(Color(0xFF000000)),
+                        color = ColorProvider(themeColors.titleColor),
                         fontFamily = FontFamily.SansSerif
                     ),
                     modifier = GlanceModifier.padding(bottom = 8.dp),
                     maxLines = 2
                 )
 
-                // Code block - iOS monospace style
+                // Code block
                 Box(
                     modifier = GlanceModifier
                         .fillMaxWidth()
-                        .background(ColorProvider(Color(0xFFF5F5F7))) // iOS light code background
+                        .background(ColorProvider(themeColors.codeBackground))
                         .cornerRadius(12.dp)
                         .padding(12.dp)
                 ) {
@@ -153,7 +158,7 @@ class CodeSnackWidget : GlanceAppWidget() {
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
-                            color = ColorProvider(Color(0xFF007AFF)), // iOS blue
+                            color = ColorProvider(themeColors.codeTextColor),
                             fontFamily = FontFamily.Monospace
                         ),
                         maxLines = 5
@@ -162,23 +167,23 @@ class CodeSnackWidget : GlanceAppWidget() {
 
                 Spacer(modifier = GlanceModifier.height(8.dp))
 
-                // Explanation - iOS secondary text
+                // Explanation
                 Text(
                     text = snippet.explanation,
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
-                        color = ColorProvider(Color(0xFF8E8E93)), // iOS secondary label
+                        color = ColorProvider(themeColors.explanationColor),
                         fontFamily = FontFamily.SansSerif
                     ),
                     modifier = GlanceModifier.padding(bottom = 4.dp),
                     maxLines = 3
                 )
-            
+
 
                 Spacer(modifier = GlanceModifier.defaultWeight())
 
-                // Footer - iOS style tap hint
+                // Footer - tap hint
                 Row(
                     modifier = GlanceModifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Horizontal.CenterHorizontally
@@ -188,7 +193,7 @@ class CodeSnackWidget : GlanceAppWidget() {
                         style = TextStyle(
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = ColorProvider(Color(0xFFC7C7CC)), // iOS tertiary label
+                            color = ColorProvider(themeColors.tapHintColor),
                             fontFamily = FontFamily.SansSerif
                         )
                     )
@@ -207,6 +212,7 @@ class CodeSnackWidget : GlanceAppWidget() {
             com.example.codesnack.model.ProgrammingLanguage.SWIFT -> Color(0xFFFA7343)
             com.example.codesnack.model.ProgrammingLanguage.RUST -> Color(0xFFCE422B)
             com.example.codesnack.model.ProgrammingLanguage.GO -> Color(0xFF00ADD8)
+            com.example.codesnack.model.ProgrammingLanguage.DART -> Color(0xFF0175C2)
         }
     }
 
@@ -221,6 +227,7 @@ class CodeSnackWidget : GlanceAppWidget() {
             com.example.codesnack.model.ProgrammingLanguage.SWIFT -> Color(0x59FA7343)
             com.example.codesnack.model.ProgrammingLanguage.RUST -> Color(0x59CE422B)
             com.example.codesnack.model.ProgrammingLanguage.GO -> Color(0x4D00ADD8)
+            com.example.codesnack.model.ProgrammingLanguage.DART -> Color(0x4D0175C2)
         }
     }
 }

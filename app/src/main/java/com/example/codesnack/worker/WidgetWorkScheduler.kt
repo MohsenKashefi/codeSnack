@@ -74,14 +74,17 @@ object WidgetWorkScheduler {
         )
     }
 
-    fun triggerImmediateAiGeneration(context: Context) {
-        // Trigger one-time AI generation immediately for testing
+    fun triggerImmediateAiGeneration(context: Context, language: String? = null) {
+        // Trigger one-time AI generation immediately for a specific language
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
+        val inputData = workDataOf("language" to (language ?: "ALL"))
+
         val immediateWorkRequest = OneTimeWorkRequestBuilder<AiTipGenerationWorker>()
             .setConstraints(constraints)
+            .setInputData(inputData)
             .build()
 
         WorkManager.getInstance(context).enqueue(immediateWorkRequest)

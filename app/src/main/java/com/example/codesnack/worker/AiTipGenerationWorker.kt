@@ -15,13 +15,17 @@ class AiTipGenerationWorker(
 ) : CoroutineWorker(context, params) {
 
     companion object {
-        private const val TIPS_TO_GENERATE = 5 // Generate 5 tips per run
+        private const val TIPS_TO_GENERATE = 5 // Generate 5 tips per run (for periodic work)
         private const val DELAY_BETWEEN_GENERATIONS_MS = 2000L // 2 seconds between API calls
     }
 
     override suspend fun doWork(): Result {
         return try {
-            Log.d("AiTipGenerationWorker", "Starting AI tip pre-generation")
+            // Check if a specific language was requested (from immediate generation button)
+            val requestedLanguage = inputData.getString("language")
+            val isImmediateGeneration = requestedLanguage != null
+
+            Log.d("AiTipGenerationWorker", "Starting AI tip generation - Immediate: $isImmediateGeneration, Language: $requestedLanguage")
 
             val prefs = WidgetPreferences(applicationContext)
 
@@ -33,28 +37,43 @@ class AiTipGenerationWorker(
 
             val geminiService = GeminiService(applicationContext, prefs.getGeminiApiKey())
 
-            // Get selected language or generate for all languages
-            val selectedLanguage = prefs.getSelectedLanguage()
-            val languagesToGenerate = if (selectedLanguage != null) {
-                listOf(selectedLanguage)
-            } else {
-                // Generate tips for popular languages
-                listOf("Kotlin", "Python", "JavaScript", "Java")
+            // Determine languages to generate for
+            val languagesToGenerate = when {
+                // Immediate generation for specific language
+                isImmediateGeneration && requestedLanguage != "ALL" -> listOf(requestedLanguage!!)
+                // Immediate generation for all languages
+                isImmediateGeneration && requestedLanguage == "ALL" -> listOf("Kotlin") // Default to Kotlin
+                // Periodic generation - use user's selected language
+                else -> {
+                    val selectedLanguage = prefs.getSelectedLanguage()
+                    if (selectedLanguage != null) {
+                        listOf(selectedLanguage)
+                    } else {
+                        // Generate tips for popular languages
+                        listOf("Kotlin", "Python", "JavaScript", "Java")
+                    }
+                }
             }
 
             var successCount = 0
             var failureCount = 0
 
             for (language in languagesToGenerate) {
-                // Check if we already have enough cached tips for this language
-                val cachedCount = geminiService.getTipCountByLanguage(language)
-                if (cachedCount >= 10) {
-                    Log.d("AiTipGenerationWorker", "Already have $cachedCount tips for $language, skipping")
-                    continue
+                // For immediate generation, always generate 1 tip
+                // For periodic generation, check cache and generate as needed
+                val tipsNeeded = if (isImmediateGeneration) {
+                    1 // Always generate exactly 1 tip for immediate requests
+                } else {
+                    // Check if we already have enough cached tips for this language
+                    val cachedCount = geminiService.getTipCountByLanguage(language)
+                    if (cachedCount >= 10) {
+                        Log.d("AiTipGenerationWorker", "Already have $cachedCount tips for $language, skipping")
+                        continue
+                    }
+                    // Generate tips for this language (periodic generation)
+                    (TIPS_TO_GENERATE - (10 - cachedCount)).coerceAtLeast(1)
                 }
 
-                // Generate tips for this language
-                val tipsNeeded = (TIPS_TO_GENERATE - (10 - cachedCount)).coerceAtLeast(1)
                 Log.d("AiTipGenerationWorker", "Generating $tipsNeeded tips for $language")
 
                 repeat(tipsNeeded) { index ->
@@ -73,9 +92,17 @@ class AiTipGenerationWorker(
                                 putString("cached_ai_tip_language", tip.language)
                                 putString("cached_ai_tip_category", tip.category)
                                 putLong("cached_ai_tip_timestamp", System.currentTimeMillis())
+                                // Notify MainActivity to refresh automatically
+                                putLong("ai_tip_refresh_trigger", System.currentTimeMillis())
                                 apply()
                             }
                             Log.d("AiTipGenerationWorker", "Cached AI tip in SharedPreferences for widget")
+
+                            // Send broadcast to notify MainActivity for automatic refresh
+                            val intent = android.content.Intent("com.example.codesnack.AI_TIP_GENERATED")
+                            intent.putExtra("language", tip.language)
+                            applicationContext.sendBroadcast(intent)
+                            Log.d("AiTipGenerationWorker", "Sent broadcast for automatic list refresh")
                         } else {
                             failureCount++
                             Log.w("AiTipGenerationWorker", "Failed to generate tip ${index + 1}/$tipsNeeded for $language")

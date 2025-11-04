@@ -17,7 +17,8 @@ enum class ProgrammingLanguage(val displayName: String) {
     CPP("C++"),
     SWIFT("Swift"),
     RUST("Rust"),
-    GO("Go")
+    GO("Go"),
+    DART("Dart")
 }
 
 enum class SnippetCategory(val displayName: String) {

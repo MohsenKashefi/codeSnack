@@ -2,6 +2,7 @@ package com.example.codesnack.widget
 
 import android.content.Context
 import com.example.codesnack.BuildConfig
+import com.example.codesnack.model.WidgetTheme
 
 class WidgetPreferences(context: Context) {
 
@@ -86,6 +87,19 @@ class WidgetPreferences(context: Context) {
         setCurrentSnippetId(nextId)
     }
 
+    fun getWidgetTheme(): WidgetTheme {
+        val themeName = prefs.getString(KEY_WIDGET_THEME, WidgetTheme.IOS_LIGHT.name)
+        return try {
+            WidgetTheme.valueOf(themeName ?: WidgetTheme.IOS_LIGHT.name)
+        } catch (e: IllegalArgumentException) {
+            WidgetTheme.IOS_LIGHT
+        }
+    }
+
+    fun setWidgetTheme(theme: WidgetTheme) {
+        prefs.edit().putString(KEY_WIDGET_THEME, theme.name).commit()
+    }
+
     companion object {
         private const val PREFS_NAME = "CodeSnackWidgetPrefs"
         private const val KEY_CURRENT_SNIPPET_ID = "current_snippet_id"
@@ -93,5 +107,6 @@ class WidgetPreferences(context: Context) {
         private const val KEY_SELECTED_LANGUAGES = "selected_languages" // Multiple languages
         private const val KEY_GEMINI_API_KEY = "gemini_api_key"
         private const val KEY_UPDATE_FREQUENCY = "update_frequency"
+        private const val KEY_WIDGET_THEME = "widget_theme"
     }
 }

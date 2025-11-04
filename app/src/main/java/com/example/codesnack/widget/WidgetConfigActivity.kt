@@ -322,5 +322,6 @@ private fun getLanguageColor(language: ProgrammingLanguage): Color {
         ProgrammingLanguage.SWIFT -> Color(0xFFFA7343)
         ProgrammingLanguage.RUST -> Color(0xFFCE422B)
         ProgrammingLanguage.GO -> Color(0xFF00ADD8)
+        ProgrammingLanguage.DART -> Color(0xFF0175C2)
     }
 }

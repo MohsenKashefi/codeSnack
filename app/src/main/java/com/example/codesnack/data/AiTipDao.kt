@@ -31,4 +31,7 @@ interface AiTipDao {
 
     @Query("SELECT * FROM ai_tips ORDER BY generatedAt DESC")
     suspend fun getAllTips(): List<AiTip>
+
+    @Query("SELECT * FROM ai_tips WHERE language = :language ORDER BY generatedAt DESC")
+    suspend fun getTipsByLanguage(language: String): List<AiTip>
 }
