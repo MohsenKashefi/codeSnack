@@ -10,6 +10,7 @@
     android:description="@string/widget_description"
     android:previewImage="@mipmap/ic_launcher"
     android:initialLayout="@layout/glance_default_loading_layout"
+    android:configure="com.example.codesnack.widget.WidgetConfigActivity"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen">
 </appwidget-provider>

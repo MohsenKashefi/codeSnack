@@ -1,5 +1,6 @@
 package com.example.codesnack
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,6 +34,9 @@ class MainActivity : ComponentActivity() {
         // Schedule hourly widget updates
         WidgetWorkScheduler.scheduleHourlyUpdate(this)
 
+        // Schedule AI tip generation (runs every 3 hours in background)
+        WidgetWorkScheduler.scheduleAiTipGeneration(this)
+
         enableEdgeToEdge()
         setContent {
             CodeSnackTheme {
@@ -42,6 +46,27 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     CodeSnackHome(modifier = Modifier.padding(innerPadding))
                 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             }
         }
     }
@@ -50,6 +75,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CodeSnackHome(modifier: Modifier = Modifier) {
     var selectedLanguage by remember { mutableStateOf<ProgrammingLanguage?>(null) }
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     val snippets = remember(selectedLanguage) {
         if (selectedLanguage != null) {
@@ -64,20 +90,61 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = "CodeSnack",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFFE0E0E0),
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "CodeSnack",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFE0E0E0)
+            )
+
+            // Settings button
+            IconButton(
+                onClick = {
+                    context.startActivity(Intent(context, SettingsActivity::class.java))
+                }
+            ) {
+                Text(
+                    text = "⚙️",
+                    fontSize = 24.sp
+                )
+            }
+        }
 
         Text(
             text = "Add widget to your home screen for daily tips!",
             fontSize = 14.sp,
             color = Color(0xFF9E9E9E),
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
         )
+
+        // AI Generation Test Button
+        Button(
+            onClick = {
+                WidgetWorkScheduler.triggerImmediateAiGeneration(context)
+                android.widget.Toast.makeText(
+                    context,
+                    "AI tip generation started! Check logs for progress.",
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF4CAF50)
+            )
+        ) {
+            Text(
+                text = "🤖 Generate AI Tips Now (Test)",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Language filter chips
         LanguageFilterChips(
@@ -213,7 +280,7 @@ fun SnippetCard(snippet: CodeSnippet) {
     }
 }
 
-fun getLanguageColor(language: ProgrammingLanguage): Color {
+private fun getLanguageColor(language: ProgrammingLanguage): Color {
     return when (language) {
         ProgrammingLanguage.KOTLIN -> Color(0xFF7F52FF)
         ProgrammingLanguage.PYTHON -> Color(0xFF3776AB)

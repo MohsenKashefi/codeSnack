@@ -14,7 +14,9 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
+import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -29,11 +31,13 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.layout.wrapContentHeight
 import androidx.glance.layout.wrapContentSize
+import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.FontFamily
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import androidx.datastore.preferences.core.intPreferencesKey
 import com.example.codesnack.data.SnippetRepository
 import com.example.codesnack.model.CodeSnippet
 
@@ -49,10 +53,11 @@ class CodeSnackWidget : GlanceAppWidget() {
 
     @Composable
     private fun WidgetContent(context: Context) {
-        val prefs = WidgetPreferences(context)
-        val currentSnippetId = prefs.getCurrentSnippetId()
+        // Use Glance state to track snippet ID - this forces recomposition!
+        val prefs = currentState<androidx.datastore.preferences.core.Preferences>()
+        val currentSnippetId = prefs[intPreferencesKey("current_snippet_id")] ?: 1
 
-        Log.d("CodeSnackWidget", "Loading snippet with ID: $currentSnippetId")
+        Log.d("CodeSnackWidget", "WidgetContent recomposing - Loading snippet with ID: $currentSnippetId")
 
         // Get the snippet by ID, or fallback to snippet with ID 1 if not found
         val snippet = SnippetRepository.getSnippetById(currentSnippetId)
@@ -67,6 +72,7 @@ class CodeSnackWidget : GlanceAppWidget() {
                 .background(ColorProvider(Color(0xF0F0F0F0))) // iOS light mode background
                 .cornerRadius(24.dp)
                 .padding(16.dp)
+
         ) {
             Column(
                 modifier = GlanceModifier

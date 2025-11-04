@@ -23,12 +23,13 @@ class WidgetUpdateWorker(
         return try {
             Log.d("WidgetUpdateWorker", "Hourly update triggered")
 
-            // Get current snippet and move to next
+            // Get current snippet and move to next with language filter
             val prefs = WidgetPreferences(applicationContext)
             val currentId = prefs.getCurrentSnippetId()
-            val nextSnippet = SnippetRepository.getNextSnippet(currentId)
+            val selectedLanguage = prefs.getSelectedLanguage()
+            val nextSnippet = SnippetRepository.getNextSnippet(currentId, selectedLanguage)
 
-            Log.d("WidgetUpdateWorker", "Updating from snippet $currentId to ${nextSnippet.id}")
+            Log.d("WidgetUpdateWorker", "Updating from snippet $currentId to ${nextSnippet.id} (Language: $selectedLanguage)")
 
             // Save new snippet ID synchronously
             val editor = applicationContext.getSharedPreferences("CodeSnackWidgetPrefs", Context.MODE_PRIVATE).edit()

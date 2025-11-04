@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27"
 }
 
 android {
@@ -16,6 +17,18 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Load API key from .env file
+        val envFile = rootProject.file(".env")
+        var geminiApiKey = ""
+        if (envFile.exists()) {
+            envFile.readLines().forEach { line ->
+                if (line.startsWith("GEMINI_API_KEY=")) {
+                    geminiApiKey = line.substringAfter("GEMINI_API_KEY=").trim()
+                }
+            }
+        }
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
     }
 
     buildTypes {
@@ -36,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -56,6 +70,20 @@ dependencies {
 
     // WorkManager for periodic updates
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    // Google Gemini AI SDK
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
+    // OkHttp for better network handling
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // Room database for caching AI tips
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+
+    // Coroutines for async operations
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

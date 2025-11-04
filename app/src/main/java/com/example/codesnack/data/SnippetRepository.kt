@@ -220,6 +220,15 @@ object SnippetRepository {
         return snippets.random()
     }
 
+    fun getRandomSnippetByLanguage(languageName: String?): CodeSnippet {
+        val filteredSnippets = if (languageName != null) {
+            snippets.filter { it.language.name == languageName }
+        } else {
+            snippets
+        }
+        return filteredSnippets.randomOrNull() ?: snippets.random()
+    }
+
     fun getSnippetsByLanguage(language: ProgrammingLanguage): List<CodeSnippet> {
         return snippets.filter { it.language == language }
     }
@@ -228,13 +237,68 @@ object SnippetRepository {
         return snippets.find { it.id == id }
     }
 
+    fun getSnippetByIdAndLanguage(id: Int, languageName: String?): CodeSnippet? {
+        val filteredSnippets = if (languageName != null) {
+            snippets.filter { it.language.name == languageName }
+        } else {
+            snippets
+        }
+        return filteredSnippets.find { it.id == id }
+    }
+
     fun getAllSnippets(): List<CodeSnippet> {
         return snippets
     }
 
-    fun getNextSnippet(currentId: Int): CodeSnippet {
-        val currentIndex = snippets.indexOfFirst { it.id == currentId }
-        val nextIndex = (currentIndex + 1) % snippets.size
-        return snippets[nextIndex]
+    fun getNextSnippet(currentId: Int, languageName: String? = null): CodeSnippet {
+        android.util.Log.d("SnippetRepository", "getNextSnippet called with languageName: $languageName")
+
+        val filteredSnippets = if (languageName != null) {
+            val filtered = snippets.filter { it.language.name == languageName }
+            android.util.Log.d("SnippetRepository", "Filtered ${filtered.size} snippets for language: $languageName")
+            filtered
+        } else {
+            android.util.Log.d("SnippetRepository", "No filter - using all ${snippets.size} snippets")
+            snippets
+        }
+
+        if (filteredSnippets.isEmpty()) {
+            android.util.Log.w("SnippetRepository", "No snippets found for language: $languageName, falling back to all")
+            return snippets.random()
+        }
+
+        val currentIndex = filteredSnippets.indexOfFirst { it.id == currentId }
+        if (currentIndex == -1) {
+            // Current snippet not in filtered list, return first filtered snippet
+            android.util.Log.d("SnippetRepository", "Current ID $currentId not in filtered list, returning first")
+            return filteredSnippets.firstOrNull() ?: snippets.first()
+        }
+
+        val nextIndex = (currentIndex + 1) % filteredSnippets.size
+        val nextSnippet = filteredSnippets[nextIndex]
+        android.util.Log.d("SnippetRepository", "Returning snippet ${nextSnippet.id}: ${nextSnippet.title} (${nextSnippet.language.name})")
+        return nextSnippet
+    }
+
+    // Get next snippet from multiple selected languages
+    fun getNextSnippetFromLanguages(currentId: Int, languageNames: Set<String>): CodeSnippet {
+        android.util.Log.d("SnippetRepository", "getNextSnippetFromLanguages called with languages: $languageNames")
+
+        val filteredSnippets = if (languageNames.isNotEmpty()) {
+            val filtered = snippets.filter { it.language.name in languageNames }
+            android.util.Log.d("SnippetRepository", "Filtered ${filtered.size} snippets for languages: $languageNames")
+            filtered
+        } else {
+            android.util.Log.d("SnippetRepository", "No filter - using all ${snippets.size} snippets")
+            snippets
+        }
+
+        if (filteredSnippets.isEmpty()) {
+            android.util.Log.w("SnippetRepository", "No snippets found for languages: $languageNames, falling back to all")
+            return snippets.random()
+        }
+
+        // Return random snippet from filtered list
+        return filteredSnippets.random()
     }
 }
