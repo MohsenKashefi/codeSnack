@@ -100,6 +100,7 @@ class AiTipGenerationWorker(
 
                             // Send broadcast to notify MainActivity for automatic refresh
                             val intent = android.content.Intent("com.example.codesnack.AI_TIP_GENERATED")
+                            intent.setPackage(applicationContext.packageName)
                             intent.putExtra("language", tip.language)
                             applicationContext.sendBroadcast(intent)
                             Log.d("AiTipGenerationWorker", "Sent broadcast for automatic list refresh")
