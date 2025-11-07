@@ -1,5 +1,7 @@
 ## CodeSnack — Android Widget for Coding Tips
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 An Android app and homescreen widget that surfaces concise coding tips. Tips are sourced from a small curated set and optionally generated with Google Gemini, then cached locally for quick, offline-friendly access.
 
 ### Highlights
@@ -59,4 +61,6 @@ app/src/main/java/com/example/codesnack/
 - Preferences are stored in app‑private storage
 
 ## License
-This project is provided for educational purposes.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+The MIT License is a permissive open source license that allows you to use, modify, and distribute this code freely, even for commercial purposes, as long as you include the original copyright notice.
