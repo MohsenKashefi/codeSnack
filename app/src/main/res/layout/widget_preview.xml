@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_preview_background"
+    android:padding="16dp">
+
+    <!-- Header with badges -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <!-- Language badge -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kotlin"
+            android:textSize="11sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/preview_badge_kotlin"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:fontFamily="sans-serif-medium" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Category badge -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Best Practice"
+            android:textSize="11sp"
+            android:textColor="#B0BEC5"
+            android:background="@drawable/preview_badge_category"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Use Data Classes"
+        android:textSize="15sp"
+        android:textColor="#E0E0E0"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif"
+        android:layout_marginBottom="8dp"
+        android:maxLines="2"
+        android:ellipsize="end" />
+
+    <!-- Code block -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="data class User(\n    val id: Int,\n    val name: String\n)"
+        android:textSize="12sp"
+        android:textColor="#4FC3F7"
+        android:background="@drawable/preview_code_background"
+        android:padding="12dp"
+        android:fontFamily="monospace"
+        android:maxLines="5"
+        android:ellipsize="end"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Explanation -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Data classes automatically provide equals(), hashCode(), toString() and copy() methods."
+        android:textSize="12sp"
+        android:textColor="#B0BEC5"
+        android:fontFamily="sans-serif"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:layout_marginBottom="4dp" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Footer hint -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tap for next tip"
+        android:textSize="11sp"
+        android:textColor="#7F52FF"
+        android:gravity="center"
+        android:fontFamily="sans-serif-medium" />
+
+</LinearLayout>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Main background with rounded corners -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#1E1E1E" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+
+    <!-- Purple accent bar at top left (language badge simulation) -->
+    <item
+        android:left="16dp"
+        android:top="16dp"
+        android:width="70dp"
+        android:height="28dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#7F52FF" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <!-- Gray badge at top right (category badge simulation) -->
+    <item
+        android:right="16dp"
+        android:top="16dp"
+        android:width="90dp"
+        android:height="28dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#37474F" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <!-- Title area (simulated with light gray bar) -->
+    <item
+        android:left="16dp"
+        android:right="60dp"
+        android:top="56dp"
+        android:height="20dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E0" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <!-- Code block background -->
+    <item
+        android:left="16dp"
+        android:right="16dp"
+        android:top="88dp"
+        android:height="100dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#2D2D2D" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+
+    <!-- Code lines simulation (cyan colored bars inside code block) -->
+    <item
+        android:left="28dp"
+        android:right="120dp"
+        android:top="100dp"
+        android:height="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4FC3F7" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <item
+        android:left="28dp"
+        android:right="80dp"
+        android:top="118dp"
+        android:height="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4FC3F7" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <item
+        android:left="28dp"
+        android:right="100dp"
+        android:top="136dp"
+        android:height="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4FC3F7" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <item
+        android:left="28dp"
+        android:right="90dp"
+        android:top="154dp"
+        android:height="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4FC3F7" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- Explanation text simulation (gray bars) -->
+    <item
+        android:left="16dp"
+        android:right="40dp"
+        android:top="200dp"
+        android:height="10dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#B0BEC5" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <item
+        android:left="16dp"
+        android:right="60dp"
+        android:top="216dp"
+        android:height="10dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#B0BEC5" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- Footer "Tap for next tip" simulation (small purple bar centered) -->
+    <item
+        android:left="90dp"
+        android:right="90dp"
+        android:bottom="16dp"
+        android:height="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#7F52FF" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+</layer-list>
