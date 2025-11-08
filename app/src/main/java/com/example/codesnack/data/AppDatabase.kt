@@ -5,9 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [AiTip::class], version = 1, exportSchema = false)
+@Database(entities = [AiTip::class, FavoriteCode::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun aiTipDao(): AiTipDao
+    abstract fun favoriteCodeDao(): FavoriteCodeDao
 
     companion object {
         @Volatile
@@ -19,7 +20,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "codesnack_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration() // Simple migration strategy
+                    .build()
                 INSTANCE = instance
                 instance
             }
