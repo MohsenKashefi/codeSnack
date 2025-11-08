@@ -77,6 +77,11 @@ dependencies {
     // OkHttp for better network handling
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
+    // Retrofit for API calls (Code Playground)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // Room database for caching AI tips
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
