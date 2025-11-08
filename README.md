@@ -5,6 +5,7 @@
 An Android app and homescreen widget that surfaces concise coding tips. Tips are sourced from a small curated set and optionally generated with Google Gemini, then cached locally for quick, offline-friendly access.
 
 ### Highlights
+- **Interactive Code Playground**: Run code snippets directly in the app! Edit and execute code with real-time output
 - **Homescreen widget**: Glance-based widget with tap‑to‑refresh and periodic updates
 - **AI + static tips**: Gemini‑generated tips blended with curated snippets
 - **Language filter**: Pick a language or show tips from all languages
@@ -14,13 +15,17 @@ An Android app and homescreen widget that surfaces concise coding tips. Tips are
 ### Tech stack
 - **Kotlin**, **Jetpack Compose**, **Glance (AppWidget)**
 - **Room**, **WorkManager**, **Coroutines**
-- **Google Gemini** client SDK, **OkHttp**
+- **Google Gemini** client SDK, **OkHttp**, **Retrofit**
+- **Judge0 API** for code execution
 
 ## Requirements
 - Android **minSdk 24**, target/compile **36**
-- A Google Gemini API key
+- A Google Gemini API key (for AI tip generation)
+- A RapidAPI key (for Code Playground feature) - **Free tier available!**
 
 ## Setup
+
+### 1. Gemini API (for AI tips)
 1) **Get an API key**: from Google AI Studio (`https://aistudio.google.com/app/apikey`).
 2) **Create a `.env` file** at the project root with:
 
@@ -30,6 +35,13 @@ GEMINI_API_KEY=your_api_key_here
 
 The build reads this value and exposes it as `BuildConfig.GEMINI_API_KEY`. Do not commit secrets.
 
+### 2. RapidAPI Key (for Code Playground)
+1) Sign up at https://rapidapi.com/ (free)
+2) Subscribe to Judge0 CE (free tier: 50 requests/day)
+3) Add your key to `CodeExecutionService.kt`
+
+**📖 Detailed instructions:** See [PLAYGROUND_SETUP.md](PLAYGROUND_SETUP.md)
+
 ## Build & run
 ```bash
 ./gradlew assembleDebug      # build
@@ -37,11 +49,20 @@ The build reads this value and exposes it as `BuildConfig.GEMINI_API_KEY`. Do no
 ./gradlew test               # unit tests
 ```
 
-## Using the widget
+## Using the app
+
+### Widget
 1) Long‑press the homescreen → Add widgets → CodeSnack
 2) Choose a programming language (or All)
 3) Optionally set update frequency in Settings
 4) Tap the widget to fetch a fresh tip on demand
+
+### Code Playground
+1) Open the app and browse code tips
+2) Tap **"▶ Try Code"** on any snippet
+3) Edit the code in the playground
+4) Click **"Run Code"** to execute
+5) See output, execution time, and memory usage!
 
 ## Project layout (high level)
 ```text
