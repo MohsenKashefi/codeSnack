@@ -18,17 +18,22 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Load API key from .env file
+        // Load API keys from .env file
         val envFile = rootProject.file(".env")
         var geminiApiKey = ""
+        var rapidApiKey = ""
         if (envFile.exists()) {
             envFile.readLines().forEach { line ->
                 if (line.startsWith("GEMINI_API_KEY=")) {
                     geminiApiKey = line.substringAfter("GEMINI_API_KEY=").trim()
                 }
+                if (line.startsWith("RAPIDAPI_KEY=")) {
+                    rapidApiKey = line.substringAfter("RAPIDAPI_KEY=").trim()
+                }
             }
         }
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
+        buildConfigField("String", "RAPIDAPI_KEY", "\"$rapidApiKey\"")
     }
 
     buildTypes {

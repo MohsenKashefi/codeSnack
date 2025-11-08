@@ -13,3 +13,32 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Environment variables and sensitive configuration
+.env
+.env.local
+.env.production
+.env.development
+.env.*
+*.env
+
+# API Keys and Secrets
+api_keys.properties
+secrets.properties
+credentials.json
+**/secrets/
+**/api_keys/
+**/config/secrets/
+**/config/api_keys/
+
+# Keystore files
+*.jks
+*.keystore
+*.keystore.properties
+
+# Google Services
+google-services.json
+
+# Backup files
+*.bak
+*~

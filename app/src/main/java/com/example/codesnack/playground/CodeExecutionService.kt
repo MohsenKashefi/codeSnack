@@ -1,6 +1,7 @@
 package com.example.codesnack.playground
 
 import android.util.Log
+import com.example.codesnack.BuildConfig
 import com.example.codesnack.model.ProgrammingLanguage
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -11,7 +12,8 @@ class CodeExecutionService {
 
     // RapidAPI Key - Get free key at https://rapidapi.com/judge0-official/api/judge0-ce
     // Free tier: 50 requests/day
-    private val RAPIDAPI_KEY = "936b0b5effmsh5240a1580122604p1723aajsn0f8878c95e23"
+    // Key is loaded from .env file via BuildConfig
+    private val RAPIDAPI_KEY = BuildConfig.RAPIDAPI_KEY
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)

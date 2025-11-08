@@ -110,7 +110,7 @@ fun GlassmorphismPlaygroundButton(onClick: () -> Unit) {
     ) {
         Surface(
             onClick = onClick,
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
             color = Color.Transparent
         ) {
             Row(
