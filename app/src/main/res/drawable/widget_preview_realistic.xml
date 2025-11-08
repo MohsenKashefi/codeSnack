@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Main dark background with rounded corners (matching dark theme) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#1E1E1E" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+
+    <!-- === TOP SECTION: Language and Category Badges === -->
+
+    <!-- Kotlin badge (purple, top left) -->
+    <item
+        android:left="16dp"
+        android:top="16dp"
+        android:width="60dp"
+        android:height="24dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#7F52FF" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <!-- "Best Practice" category badge (gray, top right) -->
+    <item
+        android:right="16dp"
+        android:top="16dp"
+        android:width="100dp"
+        android:height="24dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#37474F" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <!-- === TITLE SECTION === -->
+
+    <!-- Title line 1 (light gray bar simulating "Use Data Classes") -->
+    <item
+        android:left="16dp"
+        android:right="90dp"
+        android:top="52dp"
+        android:height="16dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E0" />
+            <corners android:radius="3dp" />
+        </shape>
+    </item>
+
+    <!-- Title line 2 (shorter, for wrapped title) -->
+    <item
+        android:left="16dp"
+        android:right="180dp"
+        android:top="72dp"
+        android:height="16dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E0" />
+            <corners android:radius="3dp" />
+        </shape>
+    </item>
+
+    <!-- === CODE BLOCK SECTION === -->
+
+    <!-- Code block background (dark gray with rounded corners) -->
+    <item
+        android:left="16dp"
+        android:right="16dp"
+        android:top="100dp"
+        android:height="110dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#2D2D2D" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+
+    <!-- Code line 1: "data class User(" -->
+    <item
+        android:left="28dp"
+        android:right="100dp"
+        android:top="112dp"
+        android:height="14dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4FC3F7" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- Code line 2: "    val id: Int," (indented) -->
+    <item
+        android:left="44dp"
+        android:right="120dp"
+        android:top="132dp"
+        android:height="14dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4FC3F7" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- Code line 3: "    val name: String" (indented) -->
+    <item
+        android:left="44dp"
+        android:right="90dp"
+        android:top="152dp"
+        android:height="14dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4FC3F7" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- Code line 4: ")" -->
+    <item
+        android:left="28dp"
+        android:right="250dp"
+        android:top="172dp"
+        android:height="14dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4FC3F7" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- Small dot after code (simulating cursor/end marker) -->
+    <item
+        android:left="42dp"
+        android:top="174dp"
+        android:width="6dp"
+        android:height="10dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4FC3F7" />
+            <corners android:radius="1dp" />
+        </shape>
+    </item>
+
+    <!-- === EXPLANATION SECTION === -->
+
+    <!-- Explanation line 1 (gray text simulation) -->
+    <item
+        android:left="16dp"
+        android:right="40dp"
+        android:top="222dp"
+        android:height="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#B0BEC5" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- Explanation line 2 -->
+    <item
+        android:left="16dp"
+        android:right="70dp"
+        android:top="238dp"
+        android:height="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#B0BEC5" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- Explanation line 3 (shorter, last line) -->
+    <item
+        android:left="16dp"
+        android:right="150dp"
+        android:top="254dp"
+        android:height="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#B0BEC5" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- === FOOTER: "Tap for next tip" === -->
+
+    <!-- Footer text simulation (centered purple bar) -->
+    <item
+        android:left="100dp"
+        android:right="100dp"
+        android:bottom="16dp"
+        android:height="14dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#7F52FF" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <!-- Small tap icon (circle before "Tap for next tip") -->
+    <item
+        android:left="80dp"
+        android:bottom="16dp"
+        android:width="14dp"
+        android:height="14dp">
+        <shape android:shape="oval">
+            <solid android:color="#7F52FF" />
+        </shape>
+    </item>
+
+</layer-list>
