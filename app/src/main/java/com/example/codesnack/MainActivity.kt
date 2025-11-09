@@ -10,14 +10,18 @@ import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -138,6 +142,7 @@ fun GlassmorphismPlaygroundButton(onClick: () -> Unit) {
 @Composable
 fun CodeSnackHome(modifier: Modifier = Modifier) {
     var selectedLanguage by remember { mutableStateOf<ProgrammingLanguage?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
     val context = androidx.compose.ui.platform.LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -145,13 +150,15 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
     var unifiedTips by remember { mutableStateOf<List<UnifiedTip>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var refreshTrigger by remember { mutableStateOf(0) }
+    var isGeneratingAiTip by remember { mutableStateOf(false) }
 
     // Register broadcast receiver for automatic refresh when AI tip is generated
     DisposableEffect(Unit) {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 android.util.Log.d("MainActivity", "Received AI_TIP_GENERATED broadcast, refreshing list automatically")
-                // Trigger automatic refresh
+                // Stop shimmer and trigger automatic refresh
+                isGeneratingAiTip = false
                 refreshTrigger++
             }
         }
@@ -215,6 +222,21 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
         }
     }
 
+    // Filter tips based on search query
+    val filteredTips = remember(unifiedTips, searchQuery) {
+        if (searchQuery.isBlank()) {
+            unifiedTips
+        } else {
+            unifiedTips.filter { tip ->
+                tip.title.contains(searchQuery, ignoreCase = true) ||
+                tip.code.contains(searchQuery, ignoreCase = true) ||
+                tip.explanation.contains(searchQuery, ignoreCase = true) ||
+                tip.language.displayName.contains(searchQuery, ignoreCase = true) ||
+                tip.category.displayName.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -227,9 +249,10 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = "CodeSnack",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFE0E0E0)
+                fontSize = 34.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFFFFFFFF),
+                letterSpacing = (-0.5).sp
             )
 
             // Settings button
@@ -247,14 +270,73 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
 
         Text(
             text = "Add widget to your home screen for daily tips!",
-            fontSize = 14.sp,
-            color = Color(0xFF9E9E9E),
-            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Normal,
+            color = Color(0xFF8E8E93),
+            letterSpacing = 0.sp,
+            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
         )
+
+        // Search Bar
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(54
+
+                    .dp),
+            placeholder = {
+                Text(
+                    "Search tips...",
+                    fontSize = 15.sp,
+                    color = Color(0xFF8E8E93)
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Filled.Search,
+                    contentDescription = "Search",
+                    tint = Color(0xFF8E8E93),
+                    modifier = Modifier.size(20.dp)
+                )
+            },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(
+                        onClick = { searchQuery = "" },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Clear,
+                            contentDescription = "Clear",
+                            tint = Color(0xFF8E8E93),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color(0xFF1C1C1E),
+                unfocusedContainerColor = Color(0xFF1C1C1E),
+                focusedBorderColor = Color(0xFF38383A),
+                unfocusedBorderColor = Color(0xFF38383A),
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                cursorColor = Color(0xFF0A84FF)
+            ),
+            shape = RoundedCornerShape(10.dp),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         // AI Generation Button - generates 1 tip for selected language
         Button(
             onClick = {
+                // Start shimmer loading
+                isGeneratingAiTip = true
+
                 val languageName = selectedLanguage?.displayName
                 WidgetWorkScheduler.triggerImmediateAiGeneration(context, languageName)
                 val message = if (languageName != null) {
@@ -271,13 +353,15 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50)
-            )
+                containerColor = Color(0xFF34C759)
+            ),
+            shape = RoundedCornerShape(10.dp)
         ) {
             Text(
                 text = "🤖 Generate AI Tip Now",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.sp
             )
         }
 
@@ -299,12 +383,66 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
             ) {
                 CircularProgressIndicator(color = Color(0xFF7F52FF))
             }
+        } else if (filteredTips.isEmpty()) {
+            // Empty state when no results found
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "🔍",
+                        fontSize = 48.sp
+                    )
+                    Text(
+                        text = if (searchQuery.isNotEmpty()) "No tips found" else "No tips available",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFFE0E0E0)
+                    )
+                    if (searchQuery.isNotEmpty()) {
+                        Text(
+                            text = "Try a different search term",
+                            fontSize = 14.sp,
+                            color = Color(0xFF8E8E93)
+                        )
+                    }
+                }
+            }
         } else {
-            // Unified tips list (AI + Static)
+            // Filtered tips list with shimmer loading
+            val listState = rememberLazyListState()
+
+            // Force scroll to top immediately when generating starts
+            LaunchedEffect(isGeneratingAiTip) {
+                if (isGeneratingAiTip) {
+                    listState.scrollToItem(0) // Immediate scroll, not animated
+                }
+            }
+
+            // Keep forcing scroll to top while generating (in case user tries to scroll)
+            LaunchedEffect(isGeneratingAiTip, listState.firstVisibleItemIndex) {
+                if (isGeneratingAiTip && listState.firstVisibleItemIndex > 0) {
+                    listState.scrollToItem(0)
+                }
+            }
+
             LazyColumn(
+                state = listState,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(unifiedTips) { tip ->
+                // Show shimmer loading card at top when generating AI tip
+                if (isGeneratingAiTip) {
+                    item(key = "shimmer_loading") {
+                        ShimmerLoadingCard()
+                    }
+                }
+
+                // Regular tips
+                items(filteredTips) { tip ->
                     UnifiedTipCard(tip = tip)
                 }
             }
@@ -528,6 +666,146 @@ fun SnippetCard(snippet: CodeSnippet) {
                 color = Color(0xFFB0BEC5),
                 lineHeight = 18.sp
             )
+        }
+    }
+}
+
+@Composable
+fun ShimmerLoadingCard() {
+    val infiniteTransition = rememberInfiniteTransition(label = "shimmer")
+    val shimmerAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "shimmerAlpha"
+    )
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1E2A1E) // Green tint for AI
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // Shimmer badges row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // AI badge shimmer
+                    Box(
+                        modifier = Modifier
+                            .width(60.dp)
+                            .height(24.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(Color(0xFF4CAF50).copy(alpha = shimmerAlpha))
+                    )
+                    // Language badge shimmer
+                    Box(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(24.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(Color(0xFF7F52FF).copy(alpha = shimmerAlpha))
+                    )
+                }
+
+                // Category badge shimmer
+                Box(
+                    modifier = Modifier
+                        .width(70.dp)
+                        .height(24.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFF37474F).copy(alpha = shimmerAlpha))
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Title shimmer
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color(0xFF8E8E93).copy(alpha = shimmerAlpha))
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Code block shimmer
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                color = Color(0xFF2D2D2D)
+            ) {
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            .height(14.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(Color(0xFF66BB6A).copy(alpha = shimmerAlpha))
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.75f)
+                            .height(14.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(Color(0xFF66BB6A).copy(alpha = shimmerAlpha))
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.85f)
+                            .height(14.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(Color(0xFF66BB6A).copy(alpha = shimmerAlpha))
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Explanation shimmer
+            Column(
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(14.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color(0xFFB0BEC5).copy(alpha = shimmerAlpha))
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.95f)
+                        .height(14.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color(0xFFB0BEC5).copy(alpha = shimmerAlpha))
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .height(14.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color(0xFFB0BEC5).copy(alpha = shimmerAlpha))
+                )
+            }
         }
     }
 }
