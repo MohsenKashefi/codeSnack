@@ -12,12 +12,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.blur
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.PlayArrow
@@ -57,9 +60,24 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CodeSnackTheme {
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val scope = rememberCoroutineScope()
+                val systemDarkTheme = isSystemInDarkTheme()
+
+                // Theme preference state
+                var themePreference by remember { mutableStateOf<Boolean?>(null) }
+
+                LaunchedEffect(Unit) {
+                    ThemePreferences.getThemeFlow(context).collect { preference ->
+                        themePreference = preference
+                    }
+                }
+
+                val isDarkTheme = themePreference ?: systemDarkTheme
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    containerColor = Color(0xFF121212),
+                    containerColor = getBackgroundColor(isDarkTheme),
                     floatingActionButton = {
                         GlassmorphismPlaygroundButton(
                             onClick = {
@@ -68,7 +86,21 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 ) { innerPadding ->
-                    CodeSnackHome(modifier = Modifier.padding(innerPadding))
+                    CodeSnackHome(
+                        modifier = Modifier.padding(innerPadding),
+                        isDarkTheme = isDarkTheme,
+                        onThemeToggle = {
+                            scope.launch {
+                                if (themePreference == null) {
+                                    // First toggle: set opposite of system
+                                    ThemePreferences.setTheme(context, !systemDarkTheme)
+                                } else {
+                                    // Toggle current preference
+                                    ThemePreferences.setTheme(context, !isDarkTheme)
+                                }
+                            }
+                        }
+                    )
                 }
 
 
@@ -140,7 +172,99 @@ fun GlassmorphismPlaygroundButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun CodeSnackHome(modifier: Modifier = Modifier) {
+fun GlassButton(
+    text: String,
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+    ) {
+        // Outer shadow layer
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(10.dp),
+                    ambientColor = Color.Black.copy(alpha = 0.15f),
+                    spotColor = Color.Black.copy(alpha = 0.2f)
+                )
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    // Main glass gradient - lighter on top, darker on bottom
+                    Brush.verticalGradient(
+                        colors = if (isDarkTheme) {
+                            listOf(
+                                Color.White.copy(alpha = 0.15f),
+                                Color.White.copy(alpha = 0.05f)
+                            )
+                        } else {
+                            listOf(
+                                Color.White.copy(alpha = 0.9f),
+                                Color.White.copy(alpha = 0.6f)
+                            )
+                        }
+                    )
+                )
+                .border(
+                    width = 1.5.dp,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.8f),  // Bright white on top
+                            Color.White.copy(alpha = 0.2f)   // Fade to transparent on bottom
+                        )
+                    ),
+                    shape = RoundedCornerShape(10.dp)
+                )
+        ) {
+            // Top highlight for glass effect
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(2.dp)
+                    .background(
+                        Brush.horizontalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.White.copy(alpha = 0.6f),
+                                Color.Transparent
+                            )
+                        )
+                    )
+            )
+        }
+
+        // Clickable surface on top
+        Surface(
+            onClick = onClick,
+            modifier = Modifier.fillMaxSize(),
+            color = Color.Transparent
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = text,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 0.sp,
+                    color = getTextColor(isDarkTheme)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CodeSnackHome(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    onThemeToggle: () -> Unit = {}
+) {
     var selectedLanguage by remember { mutableStateOf<ProgrammingLanguage?>(null) }
     var searchQuery by remember { mutableStateOf("") }
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -249,55 +373,69 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = "CodeSnack",
-                fontSize = 34.sp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFFFFFFF),
+                color = getTextColor(isDarkTheme),
                 letterSpacing = (-0.5).sp
             )
 
-            // Settings button
-            IconButton(
-                onClick = {
-                    context.startActivity(Intent(context, SettingsActivity::class.java))
-                }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text(
-                    text = "⚙️",
-                    fontSize = 24.sp
-                )
+                // Theme toggle button
+                IconButton(
+                    onClick = onThemeToggle
+                ) {
+                    Text(
+                        text = if (isDarkTheme) "☀️" else "🌙",
+                        fontSize = 22.sp
+                    )
+                }
+
+                // Settings button
+                IconButton(
+                    onClick = {
+                        context.startActivity(Intent(context, SettingsActivity::class.java))
+                    }
+                ) {
+                    Text(
+                        text = "⚙️",
+                        fontSize = 22.sp
+                    )
+                }
             }
         }
 
         Text(
             text = "Add widget to your home screen for daily tips!",
-            fontSize = 15.sp,
+            fontSize = 13.sp,
             fontWeight = FontWeight.Normal,
-            color = Color(0xFF8E8E93),
+            color = getSecondaryTextColor(isDarkTheme),
             letterSpacing = 0.sp,
             modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
         )
 
-        // Search Bar
+        // Search Bar with glassmorphism
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(54
-
-                    .dp),
+                .height(54.dp)
+                .searchGlassmorphism(isDarkTheme),
             placeholder = {
                 Text(
                     "Search tips...",
                     fontSize = 15.sp,
-                    color = Color(0xFF8E8E93)
+                    color = getSecondaryTextColor(isDarkTheme)
                 )
             },
             leadingIcon = {
                 Icon(
                     Icons.Filled.Search,
                     contentDescription = "Search",
-                    tint = Color(0xFF8E8E93),
+                    tint = getSecondaryTextColor(isDarkTheme),
                     modifier = Modifier.size(20.dp)
                 )
             },
@@ -310,29 +448,31 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
                         Icon(
                             Icons.Filled.Clear,
                             contentDescription = "Clear",
-                            tint = Color(0xFF8E8E93),
+                            tint = getSecondaryTextColor(isDarkTheme),
                             modifier = Modifier.size(18.dp)
                         )
                     }
                 }
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFF1C1C1E),
-                unfocusedContainerColor = Color(0xFF1C1C1E),
-                focusedBorderColor = Color(0xFF38383A),
-                unfocusedBorderColor = Color(0xFF38383A),
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                focusedTextColor = getTextColor(isDarkTheme),
+                unfocusedTextColor = getTextColor(isDarkTheme),
                 cursorColor = Color(0xFF0A84FF)
             ),
-            shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(16.dp),
             singleLine = true
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         // AI Generation Button - generates 1 tip for selected language
-        Button(
+        GlassButton(
+            text = "🤖 Generate AI Tip Now",
+            isDarkTheme = isDarkTheme,
             onClick = {
                 // Start shimmer loading
                 isGeneratingAiTip = true
@@ -350,20 +490,8 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
                     android.widget.Toast.LENGTH_LONG
                 ).show()
                 // List will refresh automatically when broadcast is received
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF34C759)
-            ),
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Text(
-                text = "🤖 Generate AI Tip Now",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 0.sp
-            )
-        }
+            }
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -401,13 +529,13 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
                         text = if (searchQuery.isNotEmpty()) "No tips found" else "No tips available",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFFE0E0E0)
+                        color = getTextColor(isDarkTheme)
                     )
                     if (searchQuery.isNotEmpty()) {
                         Text(
                             text = "Try a different search term",
                             fontSize = 14.sp,
-                            color = Color(0xFF8E8E93)
+                            color = getSecondaryTextColor(isDarkTheme)
                         )
                     }
                 }
@@ -437,13 +565,13 @@ fun CodeSnackHome(modifier: Modifier = Modifier) {
                 // Show shimmer loading card at top when generating AI tip
                 if (isGeneratingAiTip) {
                     item(key = "shimmer_loading") {
-                        ShimmerLoadingCard()
+                        ShimmerLoadingCard(isDarkTheme = isDarkTheme)
                     }
                 }
 
                 // Regular tips
                 items(filteredTips) { tip ->
-                    UnifiedTipCard(tip = tip)
+                    UnifiedTipCard(tip = tip, isDarkTheme = isDarkTheme)
                 }
             }
         }
@@ -486,15 +614,11 @@ fun LanguageFilterChips(
 }
 
 @Composable
-fun UnifiedTipCard(tip: UnifiedTip) {
-    val context = androidx.compose.ui.platform.LocalContext.current
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (tip.isAiGenerated) Color(0xFF1E2A1E) else Color(0xFF1E1E1E) // Slightly green tint for AI tips
-        )
+fun UnifiedTipCard(tip: UnifiedTip, isDarkTheme: Boolean = isSystemInDarkTheme()) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .glassmorphism(isDarkTheme)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -559,7 +683,7 @@ fun UnifiedTipCard(tip: UnifiedTip) {
                 text = tip.title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFFE0E0E0)
+                color = getTextColor(isDarkTheme)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -567,7 +691,7 @@ fun UnifiedTipCard(tip: UnifiedTip) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
-                color = Color(0xFF2D2D2D)
+                color = getCodeBackgroundColor(isDarkTheme)
             ) {
                 Text(
                     text = tip.code,
@@ -583,7 +707,7 @@ fun UnifiedTipCard(tip: UnifiedTip) {
             Text(
                 text = tip.explanation,
                 fontSize = 13.sp,
-                color = Color(0xFFB0BEC5),
+                color = getSecondaryTextColor(isDarkTheme),
                 lineHeight = 18.sp
             )
         }
@@ -671,7 +795,7 @@ fun SnippetCard(snippet: CodeSnippet) {
 }
 
 @Composable
-fun ShimmerLoadingCard() {
+fun ShimmerLoadingCard(isDarkTheme: Boolean = isSystemInDarkTheme()) {
     val infiniteTransition = rememberInfiniteTransition(label = "shimmer")
     val shimmerAlpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
@@ -683,12 +807,10 @@ fun ShimmerLoadingCard() {
         label = "shimmerAlpha"
     )
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF1E2A1E) // Green tint for AI
-        )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .glassmorphism(isDarkTheme)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -748,7 +870,7 @@ fun ShimmerLoadingCard() {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
-                color = Color(0xFF2D2D2D)
+                color = getCodeBackgroundColor(isDarkTheme)
             ) {
                 Column(
                     modifier = Modifier.padding(12.dp),
